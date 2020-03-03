@@ -1,40 +1,24 @@
 import React from 'react';
 import Add from './Add';
-import Income from './Income';
-import Expenses from './Expenses';
+import ListBudgetAll from './ListBudgetAll';
 
 export default function Bottom({
-  type,
-  value,
-  handleAdd,
-  budgetList,
-  description,
+  listBudget,
   totalIncome,
-  handleDelete,
   totalExpenses,
-  handleChangeType,
-  handleChangeValue,
-  handleChangeDescription
+  handleAddNewBudget,
+  handleDeleteBudget
 }) {
   return (
     <div className='bottom'>
-      <Add
-        type={type}
-        value={value}
-        handleAdd={handleAdd}
-        description={description}
-        handleChangeType={handleChangeType}
-        handleChangeValue={handleChangeValue}
-        handleChangeDescription={handleChangeDescription}
-      />
+      <Add handleAddNewBudget={handleAddNewBudget} />
 
       <div className='container clearfix'>
-        <Income budgetList={budgetList} handleDelete={handleDelete} />
-        <Expenses
-          budgetList={budgetList}
+        <ListBudgetAll
+          listBudget={listBudget}
           totalIncome={totalIncome}
-          handleDelete={handleDelete}
           totalExpenses={totalExpenses}
+          handleDeleteBudget={handleDeleteBudget}
         />
       </div>
     </div>

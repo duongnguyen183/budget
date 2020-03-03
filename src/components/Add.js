@@ -1,47 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
-export default function Add({
-  type,
-  value,
-  budgetList,
-  handleAdd,
-  description,
-  handleChangeType,
-  handleChangeValue,
-  handleChangeDescription
-}) {
+import { v4 as uuidv4 } from 'uuid';
+
+import { TYPE } from '../constants';
+
+const initBudget = { type: 0, description: '', value: 0 };
+
+export default function Add({ handleAddNewBudget }) {
+  const [budget, setBudget] = useState(initBudget);
+
+  function handleOnChange(keyField) {
+    return e => {
+      setBudget({ ...budget, [keyField]: e.target.value });
+    };
+  }
+
+  function handleSubmit() {
+    let data = { id: uuidv4(), ...budget };
+    handleAddNewBudget(data);
+    setBudget(initBudget);
+  }
+
   return (
     <div className='add'>
       <div className='add__container'>
         <select
-          className={
-            type && type === 'inc' ? 'add__type' : 'add__type red-focus'
-          }
-          value={type}
-          onChange={handleChangeType}
+          className={`add__type ${TYPE[budget.type].classSelect}`}
+          value={budget.type}
+          onChange={handleOnChange('type')}
         >
-          <option value='inc'>+</option>
-          <option value='exp'>-</option>
+          {TYPE.map((type, index) => (
+            <option key={index} value={index}>
+              {type.labelSelect}
+            </option>
+          ))}
         </select>
         <input
           type='text'
           className='add__description'
           placeholder='Add description'
-          value={description}
-          onChange={handleChangeDescription}
+          value={budget.description}
+          onChange={handleOnChange('description')}
         />
         <input
           type='number'
           className='add__value'
           placeholder='Value'
-          value={value}
-          onChange={handleChangeValue}
+          value={budget.value}
+          onChange={handleOnChange('value')}
         />
-        <button
-          className={type && type === 'inc' ? 'add__btn' : 'add__btn red'}
-          onClick={handleAdd}
-        >
-          <IoIosCheckmarkCircleOutline />
+        <button className={`add__btn ${TYPE[budget.type].classBtn}`}>
+          <IoIosCheckmarkCircleOutline onClick={handleSubmit} />
         </button>
       </div>
     </div>

@@ -1,79 +1,72 @@
 import React, { useState } from 'react';
 import './assets/style.css';
-import { v4 as uuidv4 } from 'uuid';
 import Top from './components/Top';
 import Bottom from './components/Bottom';
 
 function App() {
-  const [budgetList, setBudgetList] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [listBudget, setListBudget] = useState([]);
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [type, setType] = useState('inc');
-  const [description, setDescription] = useState('');
-  const [value, setValue] = useState(0);
+  const [type] = useState('inc');
+  const [description] = useState('');
+  const [value] = useState(0);
 
   // Add budget
-  const handleChangeType = evt => {
-    setType(evt.target.value);
-  };
-  const handleChangeDescription = evt => {
-    setDescription(evt.target.value);
-  };
-  const handleChangeValue = evt => {
-    setValue(evt.target.value);
-  };
-  const handleAdd = () => {
+
+  function handleAddNewBudget({ id, type, description, value }) {
     if (value > 0) {
-      const newBudget = {
-        id: uuidv4(),
-        type,
+      listBudget.push({
+        id,
+        type: parseInt(type),
         description,
         value
-      };
-      budgetList.push(newBudget);
-      setBudgetList([...budgetList]);
-
-      if (type === 'inc') {
-        var updateTotalIncome = parseFloat(totalIncome) + parseFloat(value);
-        setTotalIncome(updateTotalIncome);
+      });
+      setListBudget([...listBudget]);
+      if (type === 0) {
+        var newsTotalInc = totalIncome;
+        newsTotalInc = newsTotalInc + parseFloat(value);
+        setTotalIncome(newsTotalInc);
       }
-      if (type === 'exp') {
-        var updateTotalExpenses = parseFloat(totalExpenses) + parseFloat(value);
-        setTotalExpenses(updateTotalExpenses);
+      if (parseInt(type) === 1) {
+        var newsTotalExp = totalExpenses;
+        newsTotalExp = newsTotalExp + parseFloat(value);
+        setTotalExpenses(newsTotalExp);
       }
-      setTotal(parseFloat(totalIncome) + parseFloat(totalExpenses));
-      setType('inc');
-      setDescription('');
-      setValue(0);
     }
+  }
+
+  // Delete Budget
+  function handleDeleteBudget(budgetDelete, callback) {
+    let newBudget = listBudget.filter(budget => budget.id !== budgetDelete.id);
+    setListBudget(newBudget);
+    if (budgetDelete.type === 0) {
+      var newsTotalInc = totalIncome;
+      newsTotalInc = newsTotalInc - parseFloat(budgetDelete.value);
+      setTotalIncome(newsTotalInc);
+    }
+    if (parseInt(budgetDelete.type) === 1) {
+      var newsTotalExp = totalExpenses;
+      newsTotalExp = newsTotalExp - parseFloat(budgetDelete.value);
+      setTotalExpenses(newsTotalExp);
+    }
+    callback();
+  }
+
+  let injectedPropsBottom = {
+    type,
+    value,
+    listBudget,
+    totalIncome,
+    description,
+    totalExpenses,
+    handleAddNewBudget,
+    handleDeleteBudget
   };
-  const handleDelete = evt => {
-    const budgetid = evt.target.getAttribute('budgetid');
-    console.log('budgetid');
-    console.log(budgetid);
-    console.log(evt);
-  };
+
   return (
     <>
-      <Top
-        total={total}
-        totalIncome={totalIncome}
-        totalExpenses={totalExpenses}
-      />
-      <Bottom
-        type={type}
-        value={value}
-        handleAdd={handleAdd}
-        budgetList={budgetList}
-        totalIncome={totalIncome}
-        description={description}
-        handleDelete={handleDelete}
-        totalExpenses={totalExpenses}
-        handleChangeType={handleChangeType}
-        handleChangeValue={handleChangeValue}
-        handleChangeDescription={handleChangeDescription}
-      />
+      <Top totalIncome={totalIncome} totalExpenses={totalExpenses} />
+      <Bottom {...injectedPropsBottom} />
     </>
   );
 }

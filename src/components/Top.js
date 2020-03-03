@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Top({ total, totalIncome, totalExpenses }) {
+export default function Top({ totalIncome, totalExpenses }) {
   let monthNumber = new Date().getMonth();
   let year = new Date().getFullYear();
   let monthNames = [
@@ -18,6 +18,7 @@ export default function Top({ total, totalIncome, totalExpenses }) {
     'December'
   ];
   let monthName = monthNames[monthNumber];
+
   return (
     <div className='top'>
       <div className='budget'>
@@ -50,7 +51,7 @@ export default function Top({ total, totalIncome, totalExpenses }) {
               - {parseFloat(totalExpenses).toFixed(2)}
             </div>
             <div className='budget__expenses--percentage'>
-              {totalExpenses === 0 && totalIncome === 0 ? (
+              {totalExpenses === 0 || totalIncome === 0 ? (
                 '---'
               ) : (
                 <>
